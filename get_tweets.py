@@ -17,11 +17,14 @@ def get_search_args(search_option='tweets'):
     search_args = load_credentials(filename="~/.twitter_keys.yaml",
                                    account_type="premium",
                                    yaml_key='search_tweets_api_'+search_option)
+
+    print(search_args)
     return search_args
 
 
 def get_tweets(num_tweets, search_rule, results_per_call=500,
-               search_option='tweets', from_date=None, to_date=None):
+               search_option='tweets', from_date=None, to_date=None,
+               count_bucket=None):
     '''
     input:
     - num_tweets: approximate number of tweets to collect
@@ -38,7 +41,10 @@ def get_tweets(num_tweets, search_rule, results_per_call=500,
     search_args = get_search_args(search_option)
 
     rule_a = gen_rule_payload(search_rule, from_date=from_date,
-                             to_date=to_date, results_per_call=results_per_call)
+                             to_date=to_date, results_per_call=results_per_call,
+                             count_bucket=count_bucket)
+
+    print(rule_a)
 
     if num_tweets > 500:
         return
@@ -72,14 +78,21 @@ if __name__ == '__main__':
     #eventually make this accept command line args?
     search_rule = """
                   ("changed my mind" OR
-                  "changed my opinion")
+                  "changed my opinion" OR
+                  "changed my view")
+                  -"not changed"
                   -"never changed"
                   -"haven't changed"
                   -"hasn't changed"
-                  -"have not changed"
-                  -"has not changed"
+                  -"may have changed"
+                  -"might have changed"
+                  -"might've changed"
+                  -"has ever changed"
+                  -"jk"
+                  -"just kidding"
                   -is:retweet
                   """
-    collected_tweets = get_tweets(500, search_rule)
-    pickle_results(collected_tweets, 'query_results_03_26_2018_1.pkl')
-    recovered_results_from_pkl = unpickle_results('query_results_03_26_2018_1.pkl')
+    # collected_tweets = get_tweets(500, search_rule, search_option='counts',
+    #                               count_bucket='day')
+    # pickle_results(collected_tweets, 'data/query_results_03_26_2018_1.pkl')
+    # recovered_results_from_pkl = unpickle_results('data/query_results_03_26_2018_1.pkl')
