@@ -1,3 +1,4 @@
 data/
 Finding_Tweets.ipynb
 query_list.py
+__pycache__/
