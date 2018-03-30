@@ -141,5 +141,4 @@ if __name__ == '__main__':
                   -is:retweet
                   """
 
-    collected_tweets = get_tweets(500, search_rule, search_option='counts',
-                                  count_bucket='day')
+    collected_tweets = get_tweets(50000, search_rule)

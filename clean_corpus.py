@@ -8,7 +8,7 @@ import pdb
 import numpy as np
 from nltk.tokenize import TweetTokenizer
 from get_tweets import unpickle_results
-from collections import Counter
+from collections import Counter, OrderedDict
 
 
 def load_tweet_corpus(fname):
@@ -52,10 +52,25 @@ def tweet_tokenizer(tweet_text, stem=True):
 
     return tokenized
 
+def get_stopwords():
+    # get standard English stopwords and remove internal apostrophes
+    english_stopwords = stopwords.words('english')
+    english_stopwords = list(map(lambda x: x.replace("'",''), english_stopwords))
+
+    # add stopwords
+    additional_stopwords = ['changed', 'my', 'mind', 'view','opinion']
+    stemmer = PorterStemmer()
+    additional_stopwords = [stemmer.stem(word) for word in additional_stopwords]
+    all_stopwords =  english_stopwords + additional_stopwords
+
+    return all_stopwords
 
 def get_tf_idf(raw_tweet_corpus):
+
+    stopwords = get_stopwords()
+
     vec = TfidfVectorizer(strip_accents='ascii',tokenizer=tweet_tokenizer,
-                          stop_words='english', max_features=None)
+                          stop_words=stopwords, max_df=0.5, max_features=None)
     corpus_tf_idf = vec.fit_transform(raw_tweet_corpus)
 
     return vec, corpus_tf_idf
@@ -63,8 +78,11 @@ def get_tf_idf(raw_tweet_corpus):
 
 def get_tf_matrix(raw_tweet_corpus):
     """ get bag of words """
+
+    stopwords = get_stopwords()
+
     cv = CountVectorizer(strip_accents='ascii',tokenizer=tweet_tokenizer,
-                          stop_words='english', max_features=None)
+                          stop_words=stopwords, max_df=0.5, max_features=None)
     corpus_tf_mat = cv.fit_transform(raw_tweet_corpus)
 
     return cv, corpus_tf_mat
@@ -80,7 +98,7 @@ def get_most_common_words(raw_tweet_corpus):
     return result
 
 if __name__ == '__main__':
-    raw_tweet_corpus = load_tweet_corpus('data/query_results_03_26_2018_1.pkl')
+    raw_tweet_corpus = load_tweet_corpus('data/03_28_2018_18_02.pkl')
 
     most_common = get_most_common_words(raw_tweet_corpus)
 
