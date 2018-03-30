@@ -7,17 +7,25 @@ import pickle
 import datetime
 
 
-def get_search_args(search_option='tweets'):
+def get_search_args(search_option='tweets', full_archive=False):
     '''
     ---------------------------------------------------------------------------
     input:
     - search_option: either 'tweets' or 'counts' depending on desired query
+    - full_archive: if True, allows for full_archive search (back to Jack's
+    first tweet in 2006); if false, only searches tweets in the last 31 days
     ---------------------------------------------------------------------------
     returns:
     - search_args: argument of get_tweets function used to collect
     tweets or counts of tweets
     ---------------------------------------------------------------------------
     '''
+
+    if full_archive:
+        search_option = 'full_archive_' + search_option
+    else:
+        search_option = '30day_' + search_option
+
 
     search_args = load_credentials(filename="~/.twitter_keys.yaml",
                                    account_type="premium",
@@ -28,7 +36,7 @@ def get_search_args(search_option='tweets'):
 
 def get_tweets(num_tweets, search_rule, results_per_call=500,
                search_option='tweets', from_date=None, to_date=None,
-               count_bucket=None):
+               count_bucket=None, full_archive=False):
     '''
     ---------------------------------------------------------------------------
     input:
@@ -39,6 +47,10 @@ def get_tweets(num_tweets, search_rule, results_per_call=500,
     - search_option: either 'tweets' or 'counts' depending on desired query
     - from_date/to_date: specify the time period within which to look for
     tweets (format = 'YYYY-MM-DD')
+    - count_bucket: allows user to choose how count results are binned
+    (e.g., 'day' or 'hour'); only use this param. if search_option = 'counts.'
+    - full_archive: if True, allows for full_archive search (back to Jack's
+    first tweet in 2006); if False, only searches tweets in the last 31 days
     ---------------------------------------------------------------------------
     output:
     - .pkl file storing results of query.
@@ -50,11 +62,13 @@ def get_tweets(num_tweets, search_rule, results_per_call=500,
     ---------------------------------------------------------------------------
     '''
     tweets = []
-    search_args = get_search_args(search_option)
+    search_args = get_search_args(search_option, full_archive=full_archive)
 
     rule_a = gen_rule_payload(search_rule, from_date=from_date,
                              to_date=to_date, results_per_call=results_per_call,
                              count_bucket=count_bucket)
+
+    print("\nHere are your search args:\n", search_args, '\n')
 
     print("\nHere's your rule:\n" + rule_a + '\n')
 
@@ -70,12 +84,6 @@ def get_tweets(num_tweets, search_rule, results_per_call=500,
                         result_stream_args=search_args)
         pickle_results(tweets)
 
-    #i = 0
-    # while i < num_tweets():
-    #     tweets += collect_results(rule_a, max_results=500,
-    #                               result_stream_args=search_args)
-    #     i+=results_per_call
-    ## need to change page number after each call? if so, how?
 
     return tweets
 
@@ -131,14 +139,20 @@ if __name__ == '__main__':
                   -"not changed"
                   -"never changed"
                   -"haven't changed"
+                  -"havent changed"
                   -"hasn't changed"
+                  -"hasnt changed"
                   -"may have changed"
                   -"might have changed"
                   -"might've changed"
+                  -"mightve changed"
                   -"has ever changed"
+                  -"has never changed"
                   -"jk"
                   -"just kidding"
                   -is:retweet
                   """
 
-    collected_tweets = get_tweets(50000, search_rule)
+    collected_tweets = get_tweets(30000, search_rule,
+                                  from_date='2018-01-26', to_date='2018-02-26',
+                                  full_archive=True)

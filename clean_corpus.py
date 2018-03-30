@@ -18,6 +18,23 @@ def load_tweet_corpus(fname):
 
     return tweet_corpus
 
+def load_tweet_corpus2(fnames):
+    '''
+    When we have a quote tweet (tweet that is a response to a quoted tweet),
+    combine the text of the quote tweet and the quoted tweet.
+
+    fnames = list of pickle file names
+    '''
+
+    all_tweets = []
+    for fname in fnames:
+        all_tweets += unpickle_results(fname)
+
+    tweet_text = [t.quote_or_rt_text + ' ' + t.all_text for t in all_tweets]
+    tweet_corpus = np.array(list((set(tweet_text)))) # remove duplicates
+
+    return tweet_corpus
+
 
 def clean_tokenize(tweet_corpus):
     '''
@@ -58,7 +75,8 @@ def get_stopwords():
     english_stopwords = list(map(lambda x: x.replace("'",''), english_stopwords))
 
     # add stopwords
-    additional_stopwords = ['changed', 'my', 'mind', 'view','opinion']
+    additional_stopwords = ['changed', 'my', 'mind', 'view','opinion', 'fuck',
+                            'lmao', 'shit', 'ok', 'okay']
     stemmer = PorterStemmer()
     additional_stopwords = [stemmer.stem(word) for word in additional_stopwords]
     all_stopwords =  english_stopwords + additional_stopwords
@@ -70,7 +88,8 @@ def get_tf_idf(raw_tweet_corpus):
     stopwords = get_stopwords()
 
     vec = TfidfVectorizer(strip_accents='ascii',tokenizer=tweet_tokenizer,
-                          stop_words=stopwords, max_df=0.5, max_features=None)
+                          stop_words=stopwords, max_df=0.8, max_features=5000,
+                          ngram_range=(1,1))
     corpus_tf_idf = vec.fit_transform(raw_tweet_corpus)
 
     return vec, corpus_tf_idf
@@ -97,8 +116,10 @@ def get_most_common_words(raw_tweet_corpus):
 
     return result
 
+
 if __name__ == '__main__':
-    raw_tweet_corpus = load_tweet_corpus('data/03_28_2018_18_02.pkl')
+    raw_tweet_corpus = load_tweet_corpus2(['data/03_28_2018_18_02.pkl',
+                                           'data/03_30_2018_15_37.pkl'])
 
     most_common = get_most_common_words(raw_tweet_corpus)
 
