@@ -118,10 +118,15 @@ def get_most_common_words(raw_tweet_corpus):
 
 
 if __name__ == '__main__':
-    raw_tweet_corpus = load_tweet_corpus2(['data/03_28_2018_18_02.pkl',
-                                           'data/03_30_2018_15_37.pkl'])
+    raw_tweet_corpus = load_tweet_corpus2(['../data/03_28_2018_18_02.pkl',
+                                           '../data/03_30_2018_15_37.pkl'])
 
-    most_common = get_most_common_words(raw_tweet_corpus)
+    cv, corpus_tf_mat = get_tf_matrix(raw_tweet_corpus)
+
+    
+
+
+    #most_common = get_most_common_words(raw_tweet_corpus)
 
     # vocab = Counter(vec.vocabulary_)
     # most_common_words = vocab.most_common()
