@@ -8,18 +8,51 @@ class TweetCorpus(object):
     Given a list of .pkl files containing lists of tweet objects, this class
     will recover the tweet objects from the .pkl files and assemble various
     corpora of tweets (stored as class attributes) that can then be used for
-    topic modeling using the BuildNMF class.
+    topic modeling using the BuildNMF class. The class also constructs a pandas
+    dataframe from the tweet objects, which is useful for exploratory data
+    analysis.
 
     Methods
     --------
-    -
+    Note: all methods are helper functions used to build the tweet corpora and
+    the pandas dataframe
 
+    - _get_corpus():
+        recovers tweet objects from .pkl files, & builds three types of corpora
+        (raw_tweet_corpus, quote_aggregated_corpus, and hashtag_aggregated_corpus)
+    - _aggregate_by_hashtag():
+        aggreggates tweets with the same hashtag to synthesize longer documents
+        for improved topic modeling
+    - _create_tweet_df():
+        constructs a pandas dataframe that contains useful information about
+        each tweet in the corpus
 
     Attributes
     -----------
-    -
+    - pickled_tweet_batches:
+        list of .pkl file names storing lists of tweet objects
+    - tweet_object_list:
+        list of tweet objects recovered from .pkl files
+    - raw_tweet_corpus:
+        np array of text content from each tweet (no aggregation)
+    - quote_aggregated_corpus:
+        np array of text content from each tweet where quote tweets; when we
+        encounter a quote tweet (tweet that is commenting on a quoted tweet),
+        we combine the text of the comment and the quoted tweet for added
+        context
+    - hashtag_aggregated_corpus:
+        np array of tweets that have been aggregated by hashtag (note: this
+        corpus also aggregates quote tweets)
+    - tweet_df:
+        pandas dataframe containing the following information about each tweet
+        in the corpus: date of tweet, text of tweet, Twitter user info
+        (username, user bio, profile location), text of quoted tweet,
+        at-mentions, hashtags, urls included in tweet, tweet type('tweet' or
+        'quote'), geo coordinates of location where tweet was authored, &
+        unique id of that particular tweet
 
     """
+
     def __init__(self, pickled_tweet_batches):
         self.pickled_tweet_batches = pickled_tweet_batches
         self.tweet_object_list = self._get_corpus('objects')
@@ -31,17 +64,9 @@ class TweetCorpus(object):
 
 
     def _get_corpus(self, option):
-        """ recover tweet raw tweet objects from .pkl files
-
-        Note: When we have a quote tweet (tweet that is a response to a quoted
-        tweet), we combine the text of the quote tweet and the quoted tweet.
-
-        input:
-         - list of pickle file names containing tweet batches collected using
-         get_tweets.py script
-
-        returns:
-        - list of tweet objects
+        """ recovers tweet objects from .pkl files, & builds three types of
+            corpora (raw_tweet_corpus, quote_aggregated_corpus, and
+            hashtag_aggregated_corpus)
         """
 
         all_tweets = []
@@ -67,7 +92,9 @@ class TweetCorpus(object):
 
 
     def _aggregate_by_hashtag(self):
-        """ aggregate tweets by hashtag """
+        """ aggreggates tweets with the same hashtag to synthesize longer
+            documents for improved topic modeling
+        """
 
         hashtag_dict = {}
         tweets_without_hashtags = []
@@ -86,11 +113,13 @@ class TweetCorpus(object):
 
         result = list(hashtag_dict.values()) + tweets_without_hashtags
 
-        return list
+        return np.array(result)
 
 
     def _create_tweet_df(self):
-        """ Create a pandas dataframe """
+        """ constructs a pandas dataframe that contains useful information
+            about each tweet in the corpus
+        """
 
         df = pd.DataFrame([{"date": x.created_at_datetime,
                             "text": x.all_text,
@@ -103,9 +132,10 @@ class TweetCorpus(object):
                             "urls": x.most_unrolled_urls,
                             "geo": x.geo_coordinates,
                             "type": x.tweet_type,
-                            "id": x.id} for x in all_tweets]).set_index("date")
+                            "id": x.id} for x in self.tweet_object_list]).set_index("date")
 
         return df
+
 
 if __name__ == '__main__':
     # all_tweets = load_tweet_objects(['../data/03_28_2018_18_02.pkl',
