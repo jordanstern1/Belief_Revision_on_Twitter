@@ -43,11 +43,34 @@ def get_umass_histograms(raw_tweet_corpus, num_topics_list, max_iter=100,
         plt.ylabel('UMass Coherence Score')
         plt.bar(np.arange(1, num + 1), coherence_scores)
 
-        plt.savefig('../plots/coherence_scores_' + str(num) + '_topics.eps')
+        plt.savefig('../plots/coherence_scores_' + str(num) + '_topics.png')
 
         if show:
             plt.show()
 
+
+
+def plot_mean_umass_scores(raw_tweet_corpus, num_topics_list, max_iter=100,
+                           show=False):
+
+    mean_scores = []
+
+    for num in num_topics_list:
+        nmf_mod = BuildNMF(raw_tweet_corpus, num_topics=num)
+        nmf_mod.fit(max_iter=max_iter, display=False)
+        coherence_scores = np.array(nmf_mod.get_umass_coherence_scores())
+        mean_scores += [coherence_scores.mean()]
+
+    plt.figure()
+    plt.title('Mean UMass Coherence Scores for Different Numbers of Topics')
+    plt.xlabel('Number of Topics')
+    plt.ylabel('Mean UMass Coherence Score Across All Topics')
+    plt.bar(num_topics_list, mean_scores)
+
+    plt.savefig('../plots/coherence_score_means.png')
+
+    if show:
+        plt.show()
 
 
 
@@ -57,8 +80,16 @@ if __name__ == '__main__':
 
     plt.close('all')
 
+    # Plot mean UMass coherence scores for different numbers of topics
+
+    # num_topics_list = [5, 10, 12, 15, 20, 30, 40, 50, 60, 80, 100]
+    #num_topics_list = np.arange(2,121)
+    # plot_mean_umass_scores(raw_tweet_corpus, num_topics_list, max_iter=100,
+    #                            show=False)
+
     # Plot coherence scores
-    num_topics_list = [5, 10, 12, 15, 20, 30, 50, 100]
+    # num_topics_list=[5]
+    #num_topics_list = [5, 10, 12, 15, 20, 30, 40, 50, 60, 80, 100]
     get_umass_histograms(raw_tweet_corpus, num_topics_list)
 
 

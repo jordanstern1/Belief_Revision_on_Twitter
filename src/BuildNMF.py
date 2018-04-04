@@ -18,12 +18,18 @@ import time
 
 
 def load_tweet_corpus(fnames):
-    '''
-    When we have a quote tweet (tweet that is a response to a quoted tweet),
-    combine the text of the quote tweet and the quoted tweet.
+    """ recover tweet batches from .pkl files and store text of tweets in list
 
-    fnames = list of pickle file names
-    '''
+    Note: When we have a quote tweet (tweet that is a response to a quoted
+    tweet), we combine the text of the quote tweet and the quoted tweet.
+
+    input:
+     - list of pickle file names containing tweet batches collected using
+     get_tweets.py script
+
+    returns:
+    - list of tweets (tweet corpus)
+    """
 
     all_tweets = []
     for fname in fnames:
@@ -37,14 +43,19 @@ def load_tweet_corpus(fnames):
 
 class BuildNMF(object):
     """
-    Description
+    Given a corpus of tweets, this class creates a TF-IDF matrix and builds an
+    NMF model in order to find latent topics in the tweet corpus. This class
+    also allows the user to compute UMass coherence scores for each topic in
+    order to evaluate the coherence of the latent topics.
 
     Methods
     --------
+    -
 
 
     Attributes
     -----------
+    -
 
     """
 
