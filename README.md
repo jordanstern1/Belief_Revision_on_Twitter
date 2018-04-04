@@ -26,7 +26,7 @@ coherence [1].
 Before employing the aggregation method, I have assessed the coherence of my
 topics using the UMass coherence score recommended by Steinskog et al. [1]. As an example the bar chart below shows UMass scores for each topic when there were five total topics (Note: the UMass score tends to zero as a topic becomes increasingly coherent).
 
-![Alt text](plots/coherence_scores1.png)
+![Alt text](plots/coherence_scores_5_topics.png)
 
 ## Preliminary Results
 
