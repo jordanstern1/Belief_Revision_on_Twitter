@@ -2,8 +2,6 @@ import numpy as np
 import sklearn.decomposition
 import matplotlib.pyplot as plt
 import seaborn as sns
-from get_tweets import pickle_results
-from get_tweets import unpickle_results
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from nltk.stem.porter import *
 import sklearn.decomposition
@@ -14,31 +12,8 @@ import pdb
 import numpy as np
 from nltk.tokenize import TweetTokenizer
 from collections import Counter, OrderedDict
+from get_tweet_corpus import TweetCorpus
 import time
-
-
-def load_tweet_corpus(fnames):
-    """ recover tweet batches from .pkl files and store text of tweets in list
-
-    Note: When we have a quote tweet (tweet that is a response to a quoted
-    tweet), we combine the text of the quote tweet and the quoted tweet.
-
-    input:
-     - list of pickle file names containing tweet batches collected using
-     get_tweets.py script
-
-    returns:
-    - list of tweets (tweet corpus)
-    """
-
-    all_tweets = []
-    for fname in fnames:
-        all_tweets += unpickle_results(fname)
-
-    tweet_text = [t.quote_or_rt_text + ' ' + t.all_text for t in all_tweets]
-    tweet_corpus = np.array(list((set(tweet_text)))) # remove duplicates
-
-    return tweet_corpus
 
 
 class BuildNMF(object):
@@ -50,18 +25,42 @@ class BuildNMF(object):
 
     Methods
     --------
-    -
+    - fit():
+        Uses NMF to find latent topics in tweet corpus and prints the most
+        common words in each topic in decreasing order of frequency and returns
+        the fitted scikit-learn NMF object
+    - _fit_tf_idf():
+        helper function that constructs TF-IDF matrix from tweet corpus and
+        saves the list of words and a dict mapping from words to TF-IDF indices
+    - get_umass_coherence_scores():
+        computes coherence scores for all latent topics and returns the scores
+        in the form of a list
+    - _tweet_tokenizer():
+        helper function
+    - _get_stopwords():
+        helper function
+    - _get_top_words_in_topics():
+    - _get_umass_coherence_metric():
 
 
     Attributes
     -----------
-    -
+    - tweet_corpus:
+    - num_topics:
+    - tf_idf:
+    - stopwords:
+    - words:
+    - vocab:
+    - top_words_in_topics:
+    - W:
+    - H:
+    - reconstruction_err:
 
     """
 
-    def __init__(self, raw_tweet_corpus, num_topics):
+    def __init__(self, tweet_corpus, num_topics):
 
-        self.raw_tweet_corpus = raw_tweet_corpus
+        self.tweet_corpus = tweet_corpus
         self.num_topics = num_topics
 
         # Results from construction of TF-IDF matrix
@@ -85,7 +84,7 @@ class BuildNMF(object):
         returns: reconstruction error from NMF factorization
         '''
 
-        self.fit_tf_idf()
+        self._fit_tf_idf()
         print('Now fitting NMF model (solver = ' + solver + ')')
         nmf = sklearn.decomposition.NMF(n_components=self.num_topics,
                                            max_iter=max_iter,
@@ -107,26 +106,29 @@ class BuildNMF(object):
         return nmf
 
 
-    def fit_tf_idf(self):
+    def _fit_tf_idf(self):
+
         vec = TfidfVectorizer(strip_accents='ascii',tokenizer=self._tweet_tokenizer,
                               stop_words=self.stopwords, max_df=0.8, max_features=5000,
                               ngram_range=(1,1))
 
-        self.tf_idf = vec.fit_transform(self.raw_tweet_corpus)
+        self.tf_idf = vec.fit_transform(self.tweet_corpus)
         self.words = np.array(vec.get_feature_names())
         self.vocab = vec.vocabulary_
 
 
     def get_umass_coherence_scores(self, M=5):
+
         scores = []
         for top_words_in_topic in self.top_words_in_topics:
             scores.append(self._get_umass_coherence_metric(top_words_in_topic,
-                                                           M=5))
+                                                           M))
 
         return scores
 
 
     def _tweet_tokenizer(self, tweet_text, stem=True):
+
         tknzr = TweetTokenizer(preserve_case=False, strip_handles=True,
                                reduce_len=True)
 
@@ -201,8 +203,9 @@ class BuildNMF(object):
 
 
 if __name__ == '__main__':
-    raw_tweet_corpus = load_tweet_corpus(['../data/03_28_2018_18_02.pkl',
-                                          '../data/03_30_2018_15_37.pkl'])
+    tc = TweetCorpus(['../data/03_28_2018_18_02.pkl',
+                     '../data/03_30_2018_15_37.pkl'])
 
-    nmf_mod = BuildNMF(raw_tweet_corpus, num_topics=15)
+
+    nmf_mod = BuildNMF(tc.raw_tweet_corpus, num_topics=15)
     nmf = nmf_mod.fit()
