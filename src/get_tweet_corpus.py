@@ -98,12 +98,14 @@ class TweetCorpus(object):
 
         hashtag_dict = {}
         tweets_without_hashtags = []
+
         for tweet in self.tweet_object_list:
-            if len(tweet.hashtags) == 0:
+            hashtags = tweet.hashtags
+            if len(hashtags) == 0:
                 tweets_without_hashtags += [tweet.all_text + ' ' +\
                                             tweet.quote_or_rt_text]
-            for hashtag in tweet.hashtags:
-                hashtag = hashtag.lower()
+            if len(hashtags) == 1: #only aggregate single-hashtag tweets
+                hashtag = hashtags[0].lower()
                 if hashtag not in hashtag_dict:
                     hashtag_dict[hashtag] = tweet.all_text + ' ' +\
                                             tweet.quote_or_rt_text
