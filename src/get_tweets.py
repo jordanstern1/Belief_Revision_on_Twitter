@@ -12,13 +12,18 @@ def get_search_args(search_option='tweets', full_archive=False):
     """ get search_args parameter for Twitter API's collect_results() func.
 
     input:
-    - search_option: either 'tweets' or 'counts' depending on desired query
-    - full_archive: if True, allows for full_archive search (back to Jack's
-    first tweet in 2006); if false, only searches tweets in the last 31 days
+    - search_option (string):
+        either 'tweets' or 'counts' depending on desired query
+        (pull tweets themselves or counts of tweets)
+    - full_archive (boolean):
+        if True, allows for full_archive search (back to Jack's first tweet
+        in 2006); if false, only searches tweets in the last 31 days
 
     returns:
-    - search_args: argument of get_tweets function used to collect
-    tweets or counts of tweets
+    - search_args (dict):
+        argument of get_tweets function used to collect tweets or counts
+        of tweets
+
     """
 
     if full_archive:
@@ -41,17 +46,24 @@ def get_tweets(num_tweets, search_rule, results_per_call=500,
     """ get a batch of tweets  and save them in a .pkl file
 
     input:
-    - num_tweets: approximate number of tweets to collect
-    - search_rule: string representing search query (see link below for details)
-    https://developer.twitter.com/en/docs/tweets/search/overview/premium
-    - results_per_call: how many results each API call will return (up to 500)
-    - search_option: either 'tweets' or 'counts' depending on desired query
-    - from_date/to_date: specify the time period within which to look for
-    tweets (format = 'YYYY-MM-DD')
-    - count_bucket: allows user to choose how count results are binned
-    (e.g., 'day' or 'hour'); only use this param. if search_option = 'counts.'
-    - full_archive: if True, allows for full_archive search (back to Jack's
-    first tweet in 2006); if False, only searches tweets in the last 31 days
+    - num_tweets (int):
+        approximate number of tweets to collect
+    - search_rule (string):
+        string representing search query (see link below)
+        API docs: https://developer.twitter.com/en/docs
+    - results_per_call (int):
+        how many results each API call will return(up to 500)
+    - search_option (string):
+        'tweets' or 'counts' depending on desired query
+    - from_date/to_date (string):
+        specify the time period within which to look for tweets
+        (format = 'YYYY-MM-DD')
+    - count_bucket (string):
+        allows user to choose how count results are binned (e.g., 'day' or
+        'hour'); only use this param. if search_option = 'counts.'
+    - full_archive:
+        if True, allows for full_archive search (back to Jack's first tweet
+        in 2006); if False, only searches tweets inthe last 31 days
 
     output:
     - .pkl file storing results of query.
@@ -60,6 +72,7 @@ def get_tweets(num_tweets, search_rule, results_per_call=500,
 
     returns:
     - list of tweets (or counts) collected
+
     """
 
     tweets = []
@@ -85,7 +98,6 @@ def get_tweets(num_tweets, search_rule, results_per_call=500,
                         result_stream_args=search_args)
         pickle_results(tweets)
 
-
     return tweets
 
 
@@ -94,7 +106,7 @@ def pickle_results(results_list):
     """ pickle a batch of tweets
 
     input:
-    - results_list: list of collected tweets/counts returned by query
+    - results_list (list): tweets/counts returned by query
 
     output:
     - .pkl file storing results of query.
@@ -103,6 +115,7 @@ def pickle_results(results_list):
 
     returns:
     - None
+
     """
 
     now = datetime.datetime.now()
@@ -119,10 +132,11 @@ def unpickle_results(fname):
     """ recover a batch of tweets from a .pkl file
 
     input:
-    - fname: path of file to be unpickled
+    - fname (string): path of file to be unpickled
 
     returns:
     - data stored in .pkl file (query results)
+    
     """
 
     with open(fname, 'rb') as f:
