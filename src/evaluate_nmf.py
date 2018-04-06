@@ -299,4 +299,4 @@ if __name__ == '__main__':
     # Plot reconstruction error
     # num_topics_list = [3,5,7,10]
     # errors = plot_reconstruction_err(tweet_corpus, num_topics_list,
-    #                                 savepath='../plots/reconstruction_err3.eps')
+    #                                 savepath='../plots/reconstruction_err3.png')
