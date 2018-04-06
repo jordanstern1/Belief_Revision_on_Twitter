@@ -47,6 +47,9 @@ class BuildNMF(object):
     - _get_umass_coherence_metric():
         helper function for get_umass_coherence_scores() that simply computes
         the UMass coherence score for a single topic
+    - get_tweets_in_each_topic():
+        build a dict mapping topic indices (keys) to the corresponding
+        tweets in that topic (values)
 
 
     Attributes
@@ -128,7 +131,7 @@ class BuildNMF(object):
         if display:
             for idx, topic in enumerate(self.top_words_in_topics):
                 print('-'*20)
-                print('Most common (stemmed) words for Topic', idx, ':')
+                print('Most common (stemmed) words for Topic ' + str(idx) + ':')
                 for word in topic:
                     print(word)
 
@@ -277,8 +280,8 @@ class BuildNMF(object):
 
         for m in range(1, M):
             word_m = top_words_in_topic[m]
-            word_m_index = self.vocab[word_m] # index of col corresponding to this
-                                         # word in TF-IDF
+            word_m_index = self.vocab[word_m] # index of col corresponding to
+                                              # this word in TF-IDF
             tfidf_column_for_word_m = tf_idf[:,word_m_index].todense()\
                                                             .astype(int)
             for l in range(0, m-1):
@@ -296,11 +299,33 @@ class BuildNMF(object):
 
         return coherence_score
 
+    def get_tweets_in_each_topic(self):
+        """ build a dict mapping topic indices (keys) to the corresponding
+            tweets in that topic (values)
+
+        returns:
+        -  dict mapping of topic indices to the tweets most strongly associated
+           with that topic
+        """
+
+        # each tweet can be associated with multiple topics, but here we
+        # categorize each tweet based on the topic with which it is most
+        # strongly associated
+        indices = np.argmax(self.W, axis=1)
+        tweets_in_each_topic = {}
+        for tweet_idx, topic_idx in enumerate(indices):
+            if topic_idx not in tweets_in_each_topic:
+                tweets_in_each_topic[topic_idx] = [self.tweet_corpus[tweet_idx]]
+            else:
+                tweets_in_each_topic[topic_idx] += [self.tweet_corpus[tweet_idx]]
+
+        return tweets_in_each_topic
+
 
 if __name__ == '__main__':
     tc = TweetCorpus(['../data/03_28_2018_18_02.pkl',
                      '../data/03_30_2018_15_37.pkl'])
 
 
-    nmf_mod = BuildNMF(tc.hashtag_aggregated_corpus, num_topics=15)
+    nmf_mod = BuildNMF(tc.hashtag_aggregated_corpus, num_topics=50)
     nmf = nmf_mod.fit()
