@@ -5,4 +5,5 @@ __pycache__/
 .ipynb_checkpoints/
 src/old_code/
 images_50topics/
-images_80topics/
+images_70topics/
+src/interesting_tweets.txt
