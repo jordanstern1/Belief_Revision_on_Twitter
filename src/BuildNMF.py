@@ -36,11 +36,16 @@ class BuildNMF(object):
         computes coherence scores for all latent topics and returns the scores
         in the form of a list
     - _tweet_tokenizer():
-        helper function
+        helper function for _fit_tf_idf() that cleans (removes punctuation and
+        stopwords) and tokenizes tweets
     - _get_stopwords():
-        helper function
+        helper function to get list of stopwords (standard english stopwords
+        included in nltk.corpus library plus a few added stopwords)
     - _get_top_words_in_topics():
+        helper function to get the most commonly occuring words in each topic
     - _get_umass_coherence_metric():
+        helper function for get_umass_coherence_scores() that simply computes
+        the UMass coherence score for a single topic
 
 
     Attributes
@@ -75,6 +80,8 @@ class BuildNMF(object):
         self.H = None
         self.reconstruction_err = None
 
+        self.stem_lookup_table = {} # dict mapping of stems to original words
+
 
     def fit(self, max_iter=100, solver='mu', topN=10, display=True):
         '''
@@ -99,7 +106,7 @@ class BuildNMF(object):
         if display:
             for idx, topic in enumerate(self.top_words_in_topics):
                 print('-'*20)
-                print('Most common words for Topic', idx, ':')
+                print('Most common (stemmed) words for Topic', idx, ':')
                 for word in topic:
                     print(word)
 
@@ -141,9 +148,17 @@ class BuildNMF(object):
 
         if stem:
             stemmer = PorterStemmer()
-            tokenized = [stemmer.stem(word) for word in tokenized]
+            #tokenized = [stemmer.stem(word) for word in tokenized]
+            tokenized_stemmed = []
+            for word in tokenized:
+                stem = stemmer.stem(word)
+                tokenized_stemmed.append(stem)
+                if stem not in self.stem_lookup_table:
+                    self.stem_lookup_table[stem] = set([word])
+                else:
+                    self.stem_lookup_table[stem].add(word)
 
-        return tokenized
+        return tokenized_stemmed
 
 
     def _get_stopwords(self):
@@ -207,5 +222,9 @@ if __name__ == '__main__':
                      '../data/03_30_2018_15_37.pkl'])
 
 
-    nmf_mod = BuildNMF(tc.raw_tweet_corpus, num_topics=15)
+    nmf_mod = BuildNMF(tc.hashtag_aggregated_corpus, num_topics=15)
     nmf = nmf_mod.fit()
+
+    # plt.figure()
+    # sns.boxplot(x=np.arange(1,16), y=list(nmf_mod.H))
+    # plt.show()
