@@ -4,7 +4,7 @@ from get_tweet_corpus import TweetCorpus
 from BuildNMF import BuildNMF
 import matplotlib.pyplot as plt
 import numpy as np
-
+import os
 
 def topic_word_frequency(nmf_mod, topic_idx):
     ''' get dict w/ words in corpus as keys and their frequencies as values
@@ -77,13 +77,20 @@ def topic_word_cloud(nmf_mod, topic_idx, max_words=200, figsize=(14, 8),
     if savepath:
         plt.savefig(savepath)
 
+    plt.close('all')
 
-def gen_wordclouds_for_most_coherent_topics(nmf_mod):
-    """ generate wordclouds for the most coherent topics (top 10% of Umass
-        coherence scores)
+
+def gen_wordclouds_for_all_topics(nmf_mod):
+    """ generate wordclouds for all topics
 
     input:
     - nmf_mod (BuildNMF object): this should be a fitted BuildNMF object
+
+    output:
+    - wordcloud images are saved to directory images_##topics/ with the names
+      'wordcloud_ranking#_topic#' where the ranking # corresponds to the UMass
+      coherence score of that topic (ranking of zero is the most coherent),
+      and topic # is the index of that topic
 
     returns:
     - None
@@ -91,13 +98,20 @@ def gen_wordclouds_for_most_coherent_topics(nmf_mod):
     """
 
     # generate wordclouds for most coherent topics
-    # NOTE: UMass scores are always negative (this is why we use np.abs()) 
+    # NOTE: UMass scores are always negative and the closer a UMass score gets
+    # to zero, the more coherent that topic is
     coherence_scores = np.abs(np.array(nmf_mod.get_umass_coherence_scores()))
-    tenth_percentile = np.percentile(coherence_scores,10)
-    indices = np.arange(nmf_mod.num_topics)[coherence_scores <= tenth_percentile]
-    for idx in indices:
+    indices = np.argsort(coherence_scores)
+    coherence_scores_sorted = coherence_scores[indices]
+
+    directory = '../images_' + str(nmf_mod.num_topics)+ 'topics/'
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    for ranking, idx in enumerate(indices):
         topic_word_cloud(nmf_mod, idx,
-                         savepath='../images/wordcloud_topic'+str(idx)+'.png')
+                        savepath= directory + 'wordcloud_ranking'+ str(ranking)\
+                        + '_topic' + str(idx) + '.png')
 
 
 if __name__ == '__main__':
@@ -105,9 +119,9 @@ if __name__ == '__main__':
                       '../data/03_30_2018_15_37.pkl'])
 
 
-    ideal_num_topics = 50 # determined from coherence score boxplots
+    ideal_num_topics = 70 # determined from coherence score boxplots
     nmf_mod = BuildNMF(tc.hashtag_aggregated_corpus,
                        num_topics=ideal_num_topics)
     nmf = nmf_mod.fit(display=True)
 
-    gen_wordclouds_for_most_coherent_topics(nmf_mod)
+    gen_wordclouds_for_all_topics(nmf_mod)
