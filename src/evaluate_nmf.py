@@ -3,7 +3,9 @@ from BuildNMF import BuildNMF
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
-
+import pickle
+from get_tweets import unpickle_results
+import pdb
 
 def plot_reconstruction_err(tweet_corpus, num_topics_list, max_iter=100,
                             savepath=None, show=False):
@@ -32,7 +34,7 @@ def plot_reconstruction_err(tweet_corpus, num_topics_list, max_iter=100,
 
 
 def get_umass_histograms(tweet_corpus, num_topics_list, max_iter=100,
-                         show=False, M=10):
+                         show=False, M=5):
 
     for num in num_topics_list:
         nmf_mod = BuildNMF(tweet_corpus, num_topics=num)
@@ -53,7 +55,7 @@ def get_umass_histograms(tweet_corpus, num_topics_list, max_iter=100,
 
 
 def plot_mean_umass_scores(tweet_corpus, num_topics_list, max_iter=100,
-                           show=False, M=10):
+                           savepath=None, show=False, M=5):
 
     mean_scores = []
 
@@ -69,14 +71,15 @@ def plot_mean_umass_scores(tweet_corpus, num_topics_list, max_iter=100,
     plt.ylabel('Mean UMass Coherence Score Across All Topics')
     plt.bar(num_topics_list, mean_scores)
 
-    plt.savefig('../plots/coherence_score_means2.png')
+    if savepath:
+        plt.savefig(savepath)
 
     if show:
         plt.show()
 
 
-def get_umass_box_and_whiskers(tc, num_topics, max_iter=100, M=10,
-                               savepath=None, show=True):
+def umass_box_and_whiskers_for_diff_copora(tc, num_topics, max_iter=100, M=10,
+                                           savepath=None, show=True):
     """ Description here """
 
     corpora = [tc.raw_tweet_corpus, tc.quote_aggregated_corpus,
@@ -91,7 +94,8 @@ def get_umass_box_and_whiskers(tc, num_topics, max_iter=100, M=10,
         scores.append(nmf_mod.get_umass_coherence_scores(M))
 
     plt.figure(figsize=(10,10))
-    plt.title('Coherence Score Boxplots', size=16)
+    plt.title('Coherence Score Boxplots\n(Number of Topics = {})'\
+                                    .format(num_topics), size=16)
     plt.xlabel('Tweet Corpus Used', size=14)
     plt.ylabel('UMass Coherence Score', size=14)
     sns.boxplot(x=corpora_labels, y=scores)
@@ -103,6 +107,36 @@ def get_umass_box_and_whiskers(tc, num_topics, max_iter=100, M=10,
         plt.savefig(savepath)
 
 
+def umass_box_and_whiskers_for_diff_num_topics(tc, num_topics_list,
+                                               max_iter=100, M=5,
+                                               savepath=None, show=True):
+
+    scores_list = []
+    for num in num_topics_list:
+        nmf_mod = BuildNMF(tc.hashtag_aggregated_corpus, num_topics=num)
+        nmf_mod.fit(max_iter=max_iter, display=False)
+        coherence_scores = nmf_mod.get_umass_coherence_scores(M)
+        scores_list.append(coherence_scores)
+
+
+    plt.subplots(5,2,figsize=[14,14])
+    i = 1
+    for num_topics, scores in zip(num_topics_list,scores_list):
+        plt.subplot(2,5,i)
+        plt.ylabel('UMass Coherence Score', size=8)
+        plt.title('Number of Topics = {}'.format(num_topics), size=8)
+        sns.boxplot(y=scores)
+        i+=1
+    plt.tight_layout()
+
+    if show:
+        plt.show()
+
+    if savepath:
+        plt.savefig(savepath)
+
+
+
 if __name__ == '__main__':
 
     pickled_tweet_batches = ['../data/03_28_2018_18_02.pkl',
@@ -110,11 +144,19 @@ if __name__ == '__main__':
     tc = TweetCorpus(pickled_tweet_batches)
 
     plt.close('all')
-    get_umass_box_and_whiskers(tc, 15,
-                               savepath='../plots/coherence_score_boxplots.png',
-                               max_iter=200, M=10)
 
 
+    # umass_box_and_whiskers_for_diff_copora(tc, 15,
+    # savepath='../plots/coherence_score_boxplots_diff_corpora.png', max_iter=200, M=5)
+
+    # num_topics_list = [5, 10, 12, 15, 20, 30, 40, 50, 60, 80, 100]
+    # plot_mean_umass_scores(tc.hashtag_aggregated_corpus, num_topics_list,
+    #                         savepath='../plots/coherence_score_means.png')
+
+
+    num_topics_list = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+    score = umass_box_and_whiskers_for_diff_num_topics(tc, num_topics_list,
+         savepath='../plots/coherence_score_boxplots_for_diff_num_topics.png')
 
 
 
