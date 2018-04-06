@@ -14,12 +14,12 @@ class TweetCorpus(object):
 
     Methods
     --------
-    Note: all methods are helper functions used to build the tweet corpora and
-    the pandas dataframe
+    NOTE: all methods are helper functions used to build the tweet corpora
+          and the pandas dataframe
 
     - _get_corpus():
         recovers tweet objects from .pkl files, & builds three types of corpora
-        (raw_tweet_corpus, quote_aggregated_corpus, and hashtag_aggregated_corpus)
+        (raw_tweet_corpus, quote_aggregated_corpus, & hashtag_aggregated_corpus)
     - _aggregate_by_hashtag():
         aggreggates tweets with the same hashtag to synthesize longer documents
         for improved topic modeling
@@ -41,17 +41,17 @@ class TweetCorpus(object):
         we combine the text of the comment and the quoted tweet for added
         context
     - hashtag_aggregated_corpus:
-        np array of tweets that have been aggregated by hashtag (note: this
-        corpus also aggregates quote tweets)
+        np array of tweets where single-hashtag tweets are aggregated (note:
+        this corpus also aggregates quote tweets as in quote_aggregated_corpus)
     - tweet_df:
         pandas dataframe containing the following information about each tweet
-        in the corpus: date of tweet, text of tweet, Twitter user info
+        in the corpus: date of tweet, text of tweet, twitter user info
         (username, user bio, profile location), text of quoted tweet,
         at-mentions, hashtags, urls included in tweet, tweet type('tweet' or
         'quote'), geo coordinates of location where tweet was authored, &
         unique id of that particular tweet
-
     """
+
 
     def __init__(self, pickled_tweet_batches):
         self.pickled_tweet_batches = pickled_tweet_batches
@@ -67,6 +67,18 @@ class TweetCorpus(object):
         """ recovers tweet objects from .pkl files, & builds three types of
             corpora (raw_tweet_corpus, quote_aggregated_corpus, and
             hashtag_aggregated_corpus)
+
+        input:
+        - option (string): determines what is returned
+
+        returns:
+        - if option == ...
+            - 'objects' -> returns raw tweet objects
+            - 'raw_text' -> returns raw text of tweets
+            - 'aggregate_quote_tweets' -> returns quote-aggregated corpus
+            - 'aggregate_by_hashtag' -> returns corpus that is both quote-
+                                        aggregated and hashtag-aggregated
+
         """
 
         all_tweets = []
@@ -94,6 +106,12 @@ class TweetCorpus(object):
     def _aggregate_by_hashtag(self):
         """ aggreggates tweets with the same hashtag to synthesize longer
             documents for improved topic modeling
+
+        returns:
+        - np array of tweets where single-hashtag tweets are aggregated
+          (note: this corpus also aggregates quote tweets as in
+          quote_aggregated_corpus)
+    
         """
 
         hashtag_dict = {}
@@ -104,7 +122,7 @@ class TweetCorpus(object):
             if len(hashtags) == 0:
                 tweets_without_hashtags += [tweet.all_text + ' ' +\
                                             tweet.quote_or_rt_text]
-            if len(hashtags) == 1: #only aggregate single-hashtag tweets
+            if len(hashtags) == 1: # only aggregate single-hashtag tweets
                 hashtag = hashtags[0].lower()
                 if hashtag not in hashtag_dict:
                     hashtag_dict[hashtag] = tweet.all_text + ' ' +\
@@ -121,6 +139,9 @@ class TweetCorpus(object):
     def _create_tweet_df(self):
         """ constructs a pandas dataframe that contains useful information
             about each tweet in the corpus
+
+        returns:
+        - pandas dataframe
         """
 
         df = pd.DataFrame([{"date": x.created_at_datetime,
