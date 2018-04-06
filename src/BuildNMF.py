@@ -37,7 +37,8 @@ class BuildNMF(object):
         in the form of a list
     - _tweet_tokenizer():
         helper function for _fit_tf_idf() that cleans (removes punctuation and
-        stopwords) and tokenizes tweets
+        stopwords) and tokenizes tweets; also creates reverse lookup table
+        so stemmed words can later be mapped to full words
     - _get_stopwords():
         helper function to get list of stopwords (standard english stopwords
         included in nltk.corpus library plus a few added stopwords)
@@ -50,21 +51,32 @@ class BuildNMF(object):
 
     Attributes
     -----------
-    - tweet_corpus:
-    - num_topics:
-    - tf_idf:
-    - stopwords:
-    - words:
-    - vocab:
-    - top_words_in_topics:
-    - W:
-    - H:
-    - reconstruction_err:
+    - tweet_corpus (np array):
+        array of strings (each string is a tweet)
+    - num_topics (int):
+        number of latent topics
+    - tf_idf (np array of floats):
+        TF-IDF matrix created from tweet_corpus
+    - stopwords (list of strings):
+        list of words ignored when constructing TF-IDF
+    - words (np array of strings):
+        list of all (stemmed/lowercased) words in the construction of the
+        TF-IDF matrix
+    - vocab (dict):
+        mapping of words (strings) to column indices (ints) in TF-IDF matrix
+    - top_words_in_topics (list of lists):
+        lists of top N words (strings) in each latent topic (e.g., 0th index
+        of top_words_in_topics = list of topN words in 0th topic)
+    - W (np array):
+        W matrix from non-negative matrix factorization of TF-IDF
+    - H (np array):
+        H matrix from non-negative matrix factorization of TF-IDF
+    - reconstruction_err (float):
+        Frobenius norm of TF-IDF - WH
 
     """
 
     def __init__(self, tweet_corpus, num_topics):
-
         self.tweet_corpus = tweet_corpus
         self.num_topics = num_topics
 
@@ -84,12 +96,22 @@ class BuildNMF(object):
 
 
     def fit(self, max_iter=100, solver='mu', topN=10, display=True):
-        '''
-        input: V matrix to be factorized by NMF, number of topics for NMF, max
-        number of iterations for NMF factorization
-        output: prints topN words in each topic if display=True
-        returns: reconstruction error from NMF factorization
-        '''
+        """
+        Uses NMF to find latent topics in tweet corpus and prints the most
+        common words in each topic in decreasing order of frequency
+
+        inputs:
+        - max_iter (int): max number of iterations in sklearn NMF computation
+        - solver (string):
+            -'cd' = coordinate descent (gradient descent method for minimizing
+                    reconstruction error in NMF)
+            - 'mu' = multiplicative update
+        - topN (int): number of most common words in each topic to get
+        - display (boolean): if True then print the topN words in each topic
+
+        returns:
+        - fitted scikit-learn NMF object
+        """
 
         self._fit_tf_idf()
         print('Now fitting NMF model (solver = ' + solver + ')')
@@ -114,6 +136,10 @@ class BuildNMF(object):
 
 
     def _fit_tf_idf(self):
+        """
+        helper function that constructs TF-IDF matrix from tweet corpus and
+        saves the list of words and a dict mapping from words to TF-IDF indices
+        """
 
         vec = TfidfVectorizer(strip_accents='ascii',tokenizer=self._tweet_tokenizer,
                               stop_words=self.stopwords, max_df=0.8, max_features=5000,
@@ -125,6 +151,15 @@ class BuildNMF(object):
 
 
     def get_umass_coherence_scores(self, M=5):
+        """
+        computes UMass coherence scores for all latent topics
+
+        input:
+        - M (int): # of top words to consider when computing UMass score
+
+        returns:
+        - list of coherence scores for each latent topic
+        """
 
         scores = []
         for top_words_in_topic in self.top_words_in_topics:
@@ -135,6 +170,23 @@ class BuildNMF(object):
 
 
     def _tweet_tokenizer(self, tweet_text, stem=True):
+        """
+        helper function for _fit_tf_idf() that cleans (removes punctuation and
+        stopwords) and tokenizes tweets; also creates reverse lookup table
+        (self.stem_lookup_table) so stemmed words can later be mapped to full
+        words
+
+        input:
+        - tweet_text (string): text of one tweet in corpus
+        - stem (boolean): whether or not to stem
+
+        returns:
+        - lowercased, stemmed, cleaned, and tokenized version of tweet (list)
+           NOTE:
+              - all punctuation is removed except '#' to keep hashtags intact
+              - words with length < 2 are removed
+              - URLs are removed
+        """
 
         tknzr = TweetTokenizer(preserve_case=False, strip_handles=True,
                                reduce_len=True)
@@ -142,13 +194,12 @@ class BuildNMF(object):
         punctuation = string.punctuation.replace('#','')
         tokenized = tknzr.tokenize(tweet_text)
         tokenized = list(map(lambda x: x.strip(punctuation).replace("'",''),
-                             tokenized))
+                             tokenized)) #remove apostrophes in contractions
         tokenized = list(filter(lambda x: x not in punctuation and len(x) > 2
                                 and 'http' not in x, tokenized))
 
         if stem:
             stemmer = PorterStemmer()
-            #tokenized = [stemmer.stem(word) for word in tokenized]
             tokenized_stemmed = []
             for word in tokenized:
                 stem = stemmer.stem(word)
@@ -162,6 +213,13 @@ class BuildNMF(object):
 
 
     def _get_stopwords(self):
+        """
+        helper function to get list of stopwords (standard english stopwords
+        included in nltk.corpus library plus a few added stopwords)
+
+        returns:
+        - list of all stopwords
+        """
 
         # NOTE: sklearn TfidfVectorizer removes stopwords AFTER tokenizing
 
@@ -181,6 +239,16 @@ class BuildNMF(object):
 
 
     def _get_top_words_in_topics(self, topN=10):
+        """
+        helper function to get the most commonly occuring words in each topic
+
+        input:
+        - topN (int): # of most commonly occuring words to return
+
+        returns:
+        - list of the topN words in a topic
+        """
+
         indices = np.array(np.flip(np.argsort(self.H, axis=1), axis=1))
         top_words_in_topics = []
         for row in indices:
@@ -190,7 +258,19 @@ class BuildNMF(object):
         return top_words_in_topics
 
 
-    def _get_umass_coherence_metric(self, top_words_in_topic, M=10):
+    def _get_umass_coherence_metric(self, top_words_in_topic, M=5):
+        """
+        helper function for get_umass_coherence_scores() that simply computes
+        the UMass coherence score for a single topic
+
+        input:
+        - top_words_in_topic (list of strings): top words in a particular topic
+        - M (int): # of top words to consider when computing UMass score
+
+        returns:
+        - UMass coherence score (float) for a particular topic
+        """
+
         terms_to_sum = []
         tf_idf = self.tf_idf
         tf_idf[tf_idf != 0] = 1
@@ -224,7 +304,3 @@ if __name__ == '__main__':
 
     nmf_mod = BuildNMF(tc.hashtag_aggregated_corpus, num_topics=15)
     nmf = nmf_mod.fit()
-
-    # plt.figure()
-    # sns.boxplot(x=np.arange(1,16), y=list(nmf_mod.H))
-    # plt.show()
