@@ -7,8 +7,32 @@ import pickle
 from get_tweets import unpickle_results
 import pdb
 
+
 def plot_reconstruction_err(tweet_corpus, num_topics_list, max_iter=100,
                             savepath=None, show=False):
+    """ create scatter plot of reconstruction error from NMF vs. num. topics
+        (reconstruction err = Frobenius norm of (TF-IDF - WH))
+
+    input:
+    - tweet_corpus (list or np array of strings):
+        corpus of text content from tweets
+    - num_topics_list (list of ints):
+        list of numbers of latent topics in NMF
+        (reconstruction error is computed for each value in num_topics_list)
+    - max_iter (int):
+        max number of iterations in NMF computation
+    - savepath (string):
+        file path where plot should be saved
+    - show (boolean):
+        if True, then plot is displayed
+
+    output:
+    - displays plot if show == True
+
+    returns:
+    - list of reconstruction_errs  for each num in num_topics_list
+
+    """
 
     reconstruction_errs = []
 
@@ -34,7 +58,32 @@ def plot_reconstruction_err(tweet_corpus, num_topics_list, max_iter=100,
 
 
 def get_umass_histograms(tweet_corpus, num_topics_list, max_iter=100,
-                         show=False, M=5):
+                         show=False, save=True, M=5):
+    """ creates histograms of UMass coherence scores for each num in
+        num_topics list
+
+    input:
+    - tweet_corpus (list or np array of strings):
+        corpus of text content from tweets
+    - num_topics_list (list of ints):
+        list of numbers of latent topics in NMF
+    - max_iter (int):
+        max number of iterations in NMF computation
+    - save (string):
+        if True, then histograms are saved
+    - show (boolean):
+        if True, then histograms are displayed
+    - M (int):
+        number of most commonly occuring words in a topic to consider when
+        computing UMass coherence scores for each topic
+
+    output:
+    - displays plot if show == True
+
+    returns:
+    - None
+
+    """
 
     for num in num_topics_list:
         nmf_mod = BuildNMF(tweet_corpus, num_topics=num)
@@ -48,7 +97,7 @@ def get_umass_histograms(tweet_corpus, num_topics_list, max_iter=100,
         plt.ylabel('UMass Coherence Score')
         plt.bar(np.arange(1, num + 1), coherence_scores)
 
-        plt.savefig('../plots/coherence_scores2_' + str(num) + '_topics.png')
+        plt.savefig('../plots/coherence_scores_' + str(num) + '_topics.png')
 
         if show:
             plt.show()
@@ -56,6 +105,31 @@ def get_umass_histograms(tweet_corpus, num_topics_list, max_iter=100,
 
 def plot_mean_umass_scores(tweet_corpus, num_topics_list, max_iter=100,
                            savepath=None, show=False, M=5):
+    """ creates a bar chart of mean UMass coherence scores for each num in
+        num_topics list
+
+    input:
+    - tweet_corpus (list or np array of strings):
+        corpus of text content from tweets
+    - num_topics_list (list of ints):
+        list of numbers of latent topics in NMF
+    - max_iter (int):
+        max number of iterations in NMF computation
+    - savepath (string):
+        file path where plot should be saved
+    - show (boolean):
+        if True, then histograms are displayed
+    - M (int):
+        number of most commonly occuring words in a topic to consider when
+        computing UMass coherence scores for each topic
+
+    output:
+    - displays plot if show == True
+
+    returns:
+    - None
+
+    """
 
     mean_scores = []
 
@@ -78,9 +152,33 @@ def plot_mean_umass_scores(tweet_corpus, num_topics_list, max_iter=100,
         plt.show()
 
 
-def umass_box_and_whiskers_for_diff_copora(tc, num_topics, max_iter=100, M=10,
-                                           savepath=None, show=True):
-    """ Description here """
+def umass_box_and_whiskers_for_diff_copora(tc, num_topics, max_iter=100,
+                                           savepath=None, show=True, M=5):
+    """ creates a plot with a box and whiskers to display the distribution
+        of UMass coherence scores for each type of tweet corpus
+
+    input:
+    - tc (TweetCorpus object):
+        contains different corpora as attributes
+    - num_topics_list (list of ints):
+        list of numbers of latent topics in NMF
+    - max_iter (int):
+        max number of iterations in NMF computation
+    - savepath (string):
+        file path where plot should be saved
+    - show (boolean):
+        if True, then histograms are displayed
+    - M (int):
+        number of most commonly occuring words in a topic to consider when
+        computing UMass coherence scores for each topic
+
+    output:
+    - displays plot if show == True
+
+    returns:
+    - None
+
+    """
 
     corpora = [tc.raw_tweet_corpus, tc.quote_aggregated_corpus,
                tc.hashtag_aggregated_corpus]
@@ -108,8 +206,33 @@ def umass_box_and_whiskers_for_diff_copora(tc, num_topics, max_iter=100, M=10,
 
 
 def umass_box_and_whiskers_for_diff_num_topics(tc, num_topics_list,
-                                               max_iter=100, M=5,
-                                               savepath=None, show=True):
+                                               max_iter=100, savepath=None,
+                                               show=True, M=5,):
+    """ creates a plot with a box and whiskers to display the distribution
+        of UMass coherence scores for different numbers of latent topics in NMF
+
+    input:
+    - tc (TweetCorpus object):
+        contains different corpora as attributes
+    - num_topics_list (list of ints):
+        list of numbers of latent topics in NMF
+    - max_iter (int):
+        max number of iterations in NMF computation
+    - savepath (string):
+        file path where plot should be saved
+    - show (boolean):
+        if True, then histograms are displayed
+    - M (int):
+        number of most commonly occuring words in a topic to consider when
+        computing UMass coherence scores for each topic
+
+    output:
+    - displays plot if show == True
+
+    returns:
+    - None
+
+    """
 
     scores_list = []
     for num in num_topics_list:
@@ -159,10 +282,6 @@ if __name__ == '__main__':
          savepath='../plots/coherence_score_boxplots_for_diff_num_topics.png')
 
 
-
-
-
-    ####################################################################
 
     # Plot mean UMass coherence scores for different numbers of topics
     # tweet_corpus = tc.raw_tweet_corpus
