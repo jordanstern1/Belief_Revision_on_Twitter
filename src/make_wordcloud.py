@@ -119,7 +119,7 @@ if __name__ == '__main__':
                       '../data/03_30_2018_15_37.pkl'])
 
 
-    ideal_num_topics = 70 # determined from coherence score boxplots
+    ideal_num_topics = 50 # determined from coherence score boxplots
     nmf_mod = BuildNMF(tc.hashtag_aggregated_corpus,
                        num_topics=ideal_num_topics)
     nmf = nmf_mod.fit(display=True)
