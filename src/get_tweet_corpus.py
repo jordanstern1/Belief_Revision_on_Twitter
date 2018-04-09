@@ -111,7 +111,7 @@ class TweetCorpus(object):
         - np array of tweets where single-hashtag tweets are aggregated
           (note: this corpus also aggregates quote tweets as in
           quote_aggregated_corpus)
-    
+
         """
 
         hashtag_dict = {}
@@ -163,4 +163,4 @@ class TweetCorpus(object):
 if __name__ == '__main__':
 
     tc = TweetCorpus(['../data/03_28_2018_18_02.pkl',
-                     '../data/03_30_2018_15_37.pkl'])
+                      '../data/03_30_2018_15_37.pkl'])
