@@ -7,9 +7,10 @@ from statsmodels.stats.proportion import proportion_confint
 
 def get_random_sample(tc, fpath, num):
     """ We ultimatley want to create a markdown table with sample of 500 tweets
-        and whether or not each tweet is sarcastic in tone. This function grabs
-        a random sample of num tweets from the corpus and writes them to a csv
-        file in a format that can be directly converted to markdown using this
+        and whether or not each tweet is a meaningful indication of a Twitter
+        expressing a change of opinion. This function grabs a random sample of
+        num tweets from the corpus and writes them to a csv file in a format
+        that can be directly converted to markdown using this
         link: https://donatstudios.com/CsvToMarkdownTable
 
     input:
@@ -25,6 +26,7 @@ def get_random_sample(tc, fpath, num):
 
     returns:
     - list of tweets (strings) in random sample
+
     """
 
     random_sample = list(np.random.choice(tc.raw_tweet_corpus, num))
@@ -62,6 +64,7 @@ def get_conf_intvl(fname):
     - ci_upp (float):
         upper bound of confidence interval for the proportion of
         tweets that are not meaningful
+        
     """
 
     df = pd.read_csv(fname)
@@ -83,7 +86,7 @@ if __name__ == '__main__':
     #sample = get_random_sample(tc, '../data/random_tweets.csv', 500)
 
     # get confidence interval on proportion of tweets that are not meaningful
-    # NOTE: I labelled 200 tweets as meaningful ('Y') or not meaningful ('N') 
+    # NOTE: I labelled 200 tweets as meaningful ('Y') or not meaningful ('N')
     df, ci_low, ci_upp = get_conf_intvl('../data/random_tweets_200_labelled.csv')
     print("CI for proportion of tweets that are not meaningful: " +\
           "[{:.2f}, {:.2f}]".format(ci_low, ci_upp))
