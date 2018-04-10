@@ -205,15 +205,15 @@ def umass_box_and_whiskers_for_diff_copora(tc, num_topics, max_iter=100,
         plt.savefig(savepath)
 
 
-def umass_box_and_whiskers_for_diff_num_topics(tc, num_topics_list,
+def umass_box_and_whiskers_for_diff_num_topics(tweet_corpus, num_topics_list,
                                                max_iter=100, savepath=None,
-                                               show=True, M=5,):
+                                               show=True, M=5):
     """ creates a plot with a box and whiskers to display the distribution
         of UMass coherence scores for different numbers of latent topics in NMF
 
     input:
-    - tc (TweetCorpus object):
-        contains different corpora as attributes
+    - tweet_corpus (list or np array of strings):
+        corpus of text content from tweets
     - num_topics_list (list of ints):
         list of numbers of latent topics in NMF
     - max_iter (int):
@@ -236,7 +236,7 @@ def umass_box_and_whiskers_for_diff_num_topics(tc, num_topics_list,
 
     scores_list = []
     for num in num_topics_list:
-        nmf_mod = BuildNMF(tc.hashtag_aggregated_corpus, num_topics=num)
+        nmf_mod = BuildNMF(tweet_corpus, num_topics=num)
         nmf_mod.fit(max_iter=max_iter, display=False)
         coherence_scores = nmf_mod.get_umass_coherence_scores(M)
         scores_list.append(coherence_scores)
@@ -278,7 +278,8 @@ if __name__ == '__main__':
 
 
     num_topics_list = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
-    score = umass_box_and_whiskers_for_diff_num_topics(tc, num_topics_list,
+    corp = tc.hashtag_aggregated_corpus
+    score = umass_box_and_whiskers_for_diff_num_topics(corp, num_topics_list,
          savepath='../plots/coherence_score_boxplots_for_diff_num_topics.png')
 
 
