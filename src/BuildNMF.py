@@ -323,6 +323,7 @@ class BuildNMF(object):
 
 
 if __name__ == '__main__':
+    
     tc = TweetCorpus(['../data/03_28_2018_18_02.pkl',
                      '../data/03_30_2018_15_37.pkl'])
 
