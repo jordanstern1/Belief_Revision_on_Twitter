@@ -259,6 +259,38 @@ def umass_box_and_whiskers_for_diff_num_topics(tweet_corpus, num_topics_list,
         plt.savefig(savepath)
 
 
+def get_bar_chart_of_topic_size(nmf_mod, title, ylabel, show=True,
+                                savepath=None):
+    """ plot bar chart of topic sizes
+
+    input:
+    - nmf_mod (BuildNMF object):
+        fit NMF model containing a get_tweets_in_each_topic() method
+    - title (string): title of plot
+    - ylabel (string): y-axis label
+    - show (boolean): if True, then histograms are displayed
+    - savepath (string): file path where plot should be saved
+
+    output:
+    - displays plot if show == True
+
+    returns:
+    - None
+    """
+
+    tweets_by_topic = nmf_mod.get_tweets_in_each_topic()
+    topic_sizes = [len(v) for k, v in tweets_by_topic.items()]
+    plt.figure(figsize=(10,10))
+    plt.bar(np.arange(1, len(tweets_by_topic)+1), topic_sizes)
+    plt.xlabel('Topic #', size=14)
+    plt.ylabel(ylabel, size=14)
+    plt.title(title, size=16)
+
+    if show:
+        plt.show()
+    if savepath:
+        plt.savefig(savepath)
+
 
 if __name__ == '__main__':
 
@@ -269,19 +301,31 @@ if __name__ == '__main__':
     plt.close('all')
 
 
+    # Plot bar chart of topic sizes
+    ideal_num_topics = 50 # determined from coherence score boxplots
+    nmf_mod = BuildNMF(tc.hashtag_aggregated_corpus, num_topics=ideal_num_topics)
+    nmf = nmf_mod.fit()
+    get_bar_chart_of_topic_size(nmf_mod, 'Sizes of Tweet Topics',
+                                'Number of Tweets in Topic',
+                                savepath='../plots/tweet_topic_sizes.png')
+
+
+    # Box and whiskers of topic coherences for different numbers of topics
+    # num_topics_list = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+    # corp = tc.hashtag_aggregated_corpus
+    # score = umass_box_and_whiskers_for_diff_num_topics(corp, num_topics_list,
+    #      savepath='../plots/coherence_score_boxplots_for_diff_num_topics.png')
+
+
+
+    # Box and whiskers of topic coherences for different corpora
+    # (raw corpus, quote-aggregated, and hashtag-aggregated)
     # umass_box_and_whiskers_for_diff_copora(tc, 15,
     # savepath='../plots/coherence_score_boxplots_diff_corpora.png', max_iter=200, M=5)
 
     # num_topics_list = [5, 10, 12, 15, 20, 30, 40, 50, 60, 80, 100]
     # plot_mean_umass_scores(tc.hashtag_aggregated_corpus, num_topics_list,
     #                         savepath='../plots/coherence_score_means.png')
-
-
-    num_topics_list = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
-    corp = tc.hashtag_aggregated_corpus
-    score = umass_box_and_whiskers_for_diff_num_topics(corp, num_topics_list,
-         savepath='../plots/coherence_score_boxplots_for_diff_num_topics.png')
-
 
 
     # Plot mean UMass coherence scores for different numbers of topics

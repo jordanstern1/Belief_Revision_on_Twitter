@@ -1,10 +1,10 @@
-
 from wordcloud import WordCloud
 from get_tweet_corpus import TweetCorpus
 from BuildNMF import BuildNMF
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+
 
 def topic_word_frequency(nmf_mod, topic_idx):
     ''' get dict w/ words in corpus as keys and their frequencies as values
@@ -104,7 +104,7 @@ def gen_wordclouds_for_all_topics(nmf_mod):
     indices = np.argsort(coherence_scores)
     coherence_scores_sorted = coherence_scores[indices]
 
-    directory = '../images_' + str(nmf_mod.num_topics)+ 'topics/'
+    directory = '../wordclouds_' + str(nmf_mod.num_topics)+ 'topics/'
     if not os.path.exists(directory):
         os.makedirs(directory)
 
@@ -119,7 +119,8 @@ if __name__ == '__main__':
                       '../data/03_30_2018_15_37.pkl'])
 
 
-    ideal_num_topics = 50 # determined from coherence score boxplots
+    # Get wordclouds for all topics in tweet corpus 
+    ideal_num_topics = 20 # determined from coherence score boxplots
     nmf_mod = BuildNMF(tc.hashtag_aggregated_corpus,
                        num_topics=ideal_num_topics)
     nmf = nmf_mod.fit(display=True)
