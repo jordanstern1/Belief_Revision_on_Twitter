@@ -102,7 +102,7 @@ contains relatively little content, whereas more traditional applications of top
 Steinskog et. al also recommend a particular metric to evaluate topic coherence
 known as the UMass coherence score, *C*, which is defined as
 
-$C=\sum_{m=2}^{M}\sum_{l=1}^{m-1}\log\left(\frac{D(w_m,w_l)+1}{D(w_l)}\right)$
+![Alt text](images/UMass_Eqn.png)
 
 where (*w*<sub>1</sub>, ..., *w*<sub>m</sub>) are the *M* most probable words in
 the topic (I used *M* = 5), *D*(*w*) is the number of documents that contain word
