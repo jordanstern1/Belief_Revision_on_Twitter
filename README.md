@@ -26,7 +26,7 @@ of some of the results of my analysis.
 ## Data Collection and Storage
 
 To obtain the necessary data to conduct this analysis, I wrote a script called
-**get_tweets.py** that uses Twitter's Python wrapper for their premium search API to collect tweets. This script queries for tweets containing the phrases "changed my mind," "changed my opinion," or "changed my view." To be more certain that the resulting tweets actually correspond to a change of opinion, I excluded negations of these statements (e.g., "haven't/hasn't changed my mind") and I also excluded retweets (since retweets do not necessarily represent endorsements of the original tweet). Ensuring that the tweets returned by the queries are genuine examples
+[get_tweets.py](src/get_tweets.py) that uses Twitter's Python wrapper for their premium search API to collect tweets. This script queries for tweets containing the phrases "changed my mind," "changed my opinion," or "changed my view." To be more certain that the resulting tweets actually correspond to a change of opinion, I excluded negations of these statements (e.g., "haven't/hasn't changed my mind") and I also excluded retweets (since retweets do not necessarily represent endorsements of the original tweet). Ensuring that the tweets returned by the queries are genuine examples
 of Twitter users changing their minds on a particular topic is a nontrivial issue,
 which I address in detail in the next section.
 
