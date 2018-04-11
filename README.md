@@ -7,7 +7,7 @@
 * [Data Analysis](#data-analysis)
   * [Overview](#overview)
   * [Nonnegative Matrix Factorization](#nonnegative-matrix-factorization)
-  * [Topic Coherence and Tweet Aggregation](topic-coherence-and-tweet-aggregation)
+  * [Topic Coherence and Tweet Aggregation](#topic-coherence-and-tweet-aggregation)
 * [Topic Modeling Results](#results)
 * [Time Series](#time-series)
 * [Evaluating Data Quality](#evaluating-data-quality)
