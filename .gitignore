@@ -4,6 +4,6 @@ query_list.py
 __pycache__/
 .ipynb_checkpoints/
 src/old_code/
-images_50topics/
-images_70topics/
 src/interesting_tweets.txt
+wordclouds_20topics/
+wordclouds_70topics/
