@@ -30,7 +30,7 @@ To obtain the necessary data to conduct this analysis, I wrote a script called
 of Twitter users changing their minds on a particular topic is a nontrivial issue,
 which I address in detail in the next section.
 
-Using the **get_tweets.py** script, I collected a total of 55,539 unique tweets (created between January 26, 2018 and March 28, 2018) that matched my search query. Each batch of tweets was saved in the form of a .pkl file.
+Using the [get_tweets.py](src/get_tweets.py) script, I collected a total of 55,539 unique tweets (created between January 26, 2018 and March 28, 2018) that matched my search query. Each batch of tweets was saved in the form of a .pkl file.
 
 **Note on Twitter's Python Wrapper for the premium search API**:
 Each tweet returned by the API comes in the form of a Tweet Object (dictionary-like object), which contains the actual textual content of the tweet
@@ -65,12 +65,11 @@ section was as follows:
   quality of the results.
 
 
-Part 1 in the above procedure is handled by the **get_tweet_corpus.py**, which
+Part 1 in the above procedure is handled by the [get_tweet_corpus.py](src/get_tweet_corpus.py), which
 defines a TweetCorpus class that, given a list of .pkl files containing the tweet
 batches, assembles each of the three corpora and stores them as class attributes.
-Parts 2-4 in the above procedure are executed by the **BuildNMF.py** script,
-which defines a class structure called BuildNMF. Part 5 is handled by **BuildNMF.py**
-and **evaluate_nmf.py**, where the former computes values of a metric that rates the coherence of each latent topic and the latter generates plots for visualization.
+Parts 2-4 in the above procedure are executed by the [BuildNMF.py](src/BuildNMF.py) script,
+which defines a class structure called BuildNMF. Part 5 is handled by [BuildNMF.py](src/BuildNMF.py) and [evaluate_nmf.py](src/evaluate_nmf.py), where the former computes values of a metric that rates the coherence of each latent topic and the latter generates plots for visualization.
 
 
 ### Nonnegative Matrix Factorization
@@ -97,7 +96,7 @@ we see that the reconstruction error decreases as we increase the number of late
 ### Topic Coherence and Tweet Aggregation
 
 The main challenge of topic modeling given a corpus of tweets is that each tweet
-contains relatively little content, whereas more traditional applications of topic modeling use longer documents such as news articles. Consequently there are relatively few co-occurrences of substantive words across tweets, which makes it difficult to establish coherent topics. Recent work in the field of topic modeling with Twitter data has established several methods for dealing with this issue. For example, Steinskog et al. have recommended aggregation of tweets by hashtag and by author in order to synthesize longer documents that result in increased topic coherence [1].
+contains relatively little content, whereas more traditional applications of topic modeling use longer documents such as news articles. Consequently there are relatively few co-occurrences of substantive words across tweets, which makes it difficult to establish coherent topics. Recent work in the field of topic modeling with Twitter data has established several methods for dealing with this issue. For example, Steinskog et al. have recommended aggregation of tweets by hashtag and by author in order to synthesize longer documents that result in increased topic coherence [[1]](#references).
 
 Steinskog et. al also recommend a particular metric to evaluate topic coherence
 known as the UMass coherence score, *C*, which is defined as
@@ -112,11 +111,11 @@ a method that computes UMass scores for each latent topic after the NMF model ha
 
 As explained in the Overview section, I employed three methods for assembling
 tweet corpora: (1) no aggregation, (2) quote aggregation, and (3) hashtag
-aggregation. To compare these three methods, I generated the three box plots below in order to visualize the distribution of topic coherences for each corpus (created using **evaluate_nmf.py**).
+aggregation. To compare these three methods, I generated the three box plots below in order to visualize the distribution of topic coherences for each corpus (created using [evaluate_nmf.py](src/evaluate_nmf.py)).
 
 ![Alt text](plots/coherence_score_boxplots_diff_corpora.png)
 
-As we can see, the median UMass score is clearly closer to zero for the hashtag-aggregated corpus, which is why I chose to use the hashtag-aggregated corpus for topic modeling. Next, we need to find the *optimal* number of latent topics. We do this by comparing the box plots of UMass coherence scores for different numbers of latent topics (also generated using **evaluate_nmf.py**).
+As we can see, the median UMass score is clearly closer to zero for the hashtag-aggregated corpus, which is why I chose to use the hashtag-aggregated corpus for topic modeling. Next, we need to find the *optimal* number of latent topics. We do this by comparing the box plots of UMass coherence scores for different numbers of latent topics (also generated using [evaluate_nmf.py](src/evaluate_nmf.py)).
 
 ![Alt text](plots/coherence_score_boxplots_for_diff_num_topics.png)
 
@@ -127,23 +126,20 @@ when the number of topics is less than 50). For all of these reasons *I chose 50
 ## Topic Modeling Results
 
 After building an NMF model with 50 latent topics, I created word clouds to display
-the words that are most common within each topic (generated using **make_wordcloud.py**). As an example, the word cloud shown below clearly shows that one particular topic corresponds to US immigration issues. The size of the words is proportional to how frequently those words occur within that topic.
+the words that are most common within each topic (generated using [make_wordcloud.py](src/make_wordcloud.py)). As an example, the word cloud shown below clearly shows that one particular topic corresponds to US immigration issues. The size of the words is proportional to how frequently those words occur within that topic.
 
 ![Alt text](wordclouds_50topics/wordcloud_ranking0_topic5.png)
 
-The bar chart below was generated using **evaluate_nmf.py**, and it shows the number
-of tweets belonging to that topic (the number of tweets who are more strongly
-associated with that particular topic than any other).
+The bar chart below was generated using [evaluate_nmf.py](src/evaluate_nmf.py), and it shows the number of tweets belonging to that topic (the number of tweets who are more strongly associated with that particular topic than any other).
 
 ![Alt text](plots/tweet_topic_sizes.png)
 
 We see that the largest topic is Topic \#2. To see the words associated with Topic
-\#2 or with any other topic, see the **wordclouds_50topics** folder.
+\#2 or with any other topic, see the [wordclouds_50topics](wordclouds_50topics/) folder.
 
 ## Time Series
 
-I also created a script called **time_series.py** to produce time series plots
-showing the number of tweets per day containing a particular word. Another topic
+I also created a script called [time_series.py](src/time_series.py) to produce time series plots showing the number of tweets per day containing a particular word. Another topic
 that resulted from the NMF model was a topic related to Valentine's Day, which
 makes sense because our sample of tweets spans the months of January and February,
 which of course includes Valentine's Day. The time series below shows the clear
@@ -154,9 +150,7 @@ spike in the frequency of the word 'valentine' right around February 14th.
 
 ## Evaluating Data Quality
 
-In order to judge the quality of the data, I used the script **get_random_tweet_sample.py**
-to collect a random sample of 200 tweets from my corpus, then I marked each tweet
-as meaningful or not (see **data_quality.md**). A tweet is considered *meaningful*
+In order to judge the quality of the data, I used the script [get_random_tweet_sample.py](src/get_random_tweet_sample.py) to collect a random sample of 200 tweets from my corpus, then I marked each tweet as meaningful or not (see [data_quality.md](data_quality.md)). A tweet is considered *meaningful*
 if it expresses a genuine change of opinion on a particular topic. In other words,
 a tweet is *not* meaningful if it is sarcastic (e.g., 'ya, i totally changed my mind 🙄😛') or it does not have enough substantive content to infer the relevant topic (e.g.,
   'changed my mind 😮').
@@ -164,7 +158,7 @@ a tweet is *not* meaningful if it is sarcastic (e.g., 'ya, i totally changed my 
 In this analysis, the sample of tweets in data_quality.md can be viewed as a sample
 from a binomial population, so we can construct a confidence interval for the proportion
 of tweets that are *not* meaningful using the Agresti–Coull method (a standard and robust method for computing approximate confidence intervals for the proportion parameter
-of a binomial distribution). The **get_random_tweet_sample.py** constructs this
+of a binomial distribution). The script [get_random_tweet_sample.py](src/get_random_tweet_sample.py) constructs this
 confidence interval with the following result: **[0.25, 0.37] is a 95% confidence interval
 for the proportion of tweets that are not meaningful.** This is an important caveat that
 we must consider when interpreting the validity of the results of this project.  
@@ -179,7 +173,7 @@ box plots of UMass coherence scores to determine that *there were roughly 10 top
 for Twitter bios* (or, you might say, 10 types of Twitter users tweeting about changing
 their opinion on a particular topic). The bar chart below shows the sizes of each
 of these 10 types of Twitter users. To view the word clouds associated with each
-of these topics, see the **wordclouds_10topics_bios** folder.
+of these topics, see the [wordclouds_10topics_bios](wordclouds_10topics_bios/) folder.
 
 ![Alt text](plots/bio_topic_sizes.png)
 
