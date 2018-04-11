@@ -53,11 +53,14 @@ section was as follows:
 
   1\. Assemble a collection, or *corpus*, of tweets. I employed
   three methods of assembling tweet corpora:
-  
-  ```markdown
+
+  ```
   (1) Create a list of individual tweets
-  (2) If a particular tweet quotes another tweet, combine both tweets and form a list from the resulting documents (I call this *quote-aggregated* corpus)
-  (3) Perform quote-aggregation, but also aggregate tweets sharing the same hashtag and form a list from the resulting documents (*hashtag-aggregated corpus*). For more details, see the [Topic Coherence and Tweet Aggregation](#topic-coherence-and-aggregation) section.
+  (2) If a particular tweet quotes another tweet, combine both tweets and form a list from the resulting documents
+  (I call this a quote-aggregated corpus)
+  (3) Perform quote-aggregation, but also aggregate tweets sharing the same
+  hashtag and form a list from the resulting documents (I call this a hashtag-aggregated corpus).
+  For more details, see the Topic Coherence and Tweet Aggregation section.
  ```
 
   2\. *Clean*, *stem*, and *tokenize*, each tweet. Cleaning is the process of removing
