@@ -57,9 +57,10 @@ section was as follows:
   ```
   (1) Create a list of individual tweets
   (2) If a particular tweet quotes another tweet, combine both tweets and form a list from the resulting documents
-  (I call this a quote-aggregated corpus)
-  (3) Perform quote-aggregation, but also aggregate tweets sharing the same hashtag and form a list from
-  the resulting documents (I call this a hashtag-aggregated corpus). For more details, see the Topic Coherence and Tweet Aggregation section.
+      (I call this a quote-aggregated corpus)
+  (3) Perform quote-aggregation, but also aggregate tweets sharing the same hashtag and form a list from the
+      resulting documents (I call this a hashtag-aggregated corpus). For more details, see the Topic Coherence
+      and Tweet Aggregation section.
  ```
 
   2\. *Clean*, *stem*, and *tokenize*, each tweet. Cleaning is the process of removing
