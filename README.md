@@ -151,7 +151,7 @@ The bar chart below was generated using [evaluate_nmf.py](src/evaluate_nmf.py), 
 We see that the largest topic is Topic \#2. To see the words associated with Topic
 \#2 or with any other topic, see the [wordclouds_50topics](wordclouds_50topics/) folder.
 In that folder, each word cloud is named by its ranking and its topic index \# (e.g., the
-word cloud for Topic \#2 is named [worcloudwordcloud_ranking49_topic2](wordclouds_50topics/worcloudwordcloud_ranking0_topic5.png)).
+word cloud for Topic \#2 is named [worcloudwordcloud_ranking49_topic2](wordclouds_50topics/worcloudwordcloud_ranking49_topic2.png)).
 
 
 ## Time Series
