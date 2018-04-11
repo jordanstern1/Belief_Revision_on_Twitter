@@ -102,7 +102,7 @@ contains relatively little content, whereas more traditional applications of top
 Steinskog et. al also recommend a particular metric to evaluate topic coherence
 known as the UMass coherence score, *C*, which is defined as
 
-\\[ C=\sum_{m=2}^{M}\sum_{l=1}^{m-1}\log\left(\frac{D(w_m,w_l)+1}{D(w_l)}\right) \\]
+$C=\sum_{m=2}^{M}\sum_{l=1}^{m-1}\log\left(\frac{D(w_m,w_l)+1}{D(w_l)}\right)$
 
 where (*w*<sub>1</sub>, ..., *w*<sub>m</sub>) are the *M* most probable words in
 the topic (I used *M* = 5), *D*(*w*) is the number of documents that contain word
@@ -116,9 +116,7 @@ aggregation. To compare these three methods, I generated the three box plots bel
 
 ![Alt text](plots/coherence_score_boxplots_diff_corpora.png)
 
-As we can see, the median UMass score is clearly closer to zero for the hashtag-aggregated corpus, which is why I chose to use the hashtag-aggregated corpus for topic modeling.
-
-Next, we need to find the *optimal* number of latent topics. We do this by comparing the box plots of UMass coherence scores for different numbers of latent topics (also generated using **evaluate_nmf.py**).
+As we can see, the median UMass score is clearly closer to zero for the hashtag-aggregated corpus, which is why I chose to use the hashtag-aggregated corpus for topic modeling. Next, we need to find the *optimal* number of latent topics. We do this by comparing the box plots of UMass coherence scores for different numbers of latent topics (also generated using **evaluate_nmf.py**).
 
 ![Alt text](plots/coherence_score_boxplots_for_diff_num_topics.png)
 
