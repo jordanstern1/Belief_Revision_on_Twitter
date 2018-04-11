@@ -17,9 +17,14 @@
 
 ## Introduction and Project Goals
 
-The goal of this project was to investigate cases wherein people overtly express a change of opinion on a subject via Twitter. More specifically, the aim was to attempt to answer at least the first of the following two questions: (1) With respect to what issues are people most likely to express a change of opinion? (2) What kinds of people are changing their minds?
+The goal of this project was to investigate cases wherein people overtly express a change of opinion on a subject via Twitter. More specifically, the aim was to attempt to answer at least the first of the following two questions:
 
-All of my code can be found within the src folder in this repository. The following sections clarify the function of each script in the src folder and provide examples
+```
+(1) With respect to what issues are people most likely to express a change of opinion?
+(2) What kinds of people are changing their minds?
+```
+
+All of my code can be found within the [src folder](src/) in this repository. The following sections clarify the function of each script in the src folder and provide examples
 of some of the results of my analysis.
 
 
@@ -47,7 +52,12 @@ My general approach to answering the first question posed in the Introduction
 section was as follows:
 
   1\. Assemble a collection, or *corpus*, of tweets. I employed
-  three methods of assembling tweet corpora: (1) create a list of individual tweets, (2) if a particular tweet quotes another tweet, combine both tweets and form a list from the resulting documents (I call this *quote-aggregated* corpus), and (3) perform quote-aggregation, but also aggregate tweets sharing the same hashtag and form a list from the resulting documents (*hashtag-aggregated corpus*). For more details, see the Topic Coherence and Tweet Aggregation section.
+  three methods of assembling tweet corpora:
+  ```
+  (1) Create a list of individual tweets
+  (2) If a particular tweet quotes another tweet, combine both tweets and form a list from the resulting documents (I call this *quote-aggregated* corpus)
+  (3) Perform quote-aggregation, but also aggregate tweets sharing the same hashtag and form a list from the resulting documents (*hashtag-aggregated corpus*). For more details, see the Topic Coherence and Tweet
+ Aggregation section.```
 
   2\. *Clean*, *stem*, and *tokenize*, each tweet. Cleaning is the process of removing
   extraneous content from the text (e.g., URLs and punctuation), stemming is the
@@ -69,7 +79,7 @@ Part 1 in the above procedure is handled by the [get_tweet_corpus.py](src/get_tw
 defines a TweetCorpus class that, given a list of .pkl files containing the tweet
 batches, assembles each of the three corpora and stores them as class attributes.
 Parts 2-4 in the above procedure are executed by the [BuildNMF.py](src/BuildNMF.py) script,
-which defines a class structure called BuildNMF. Part 5 is handled by [BuildNMF.py](src/BuildNMF.py) and [evaluate_nmf.py](src/evaluate_nmf.py), where the former computes values of a metric that rates the coherence of each latent topic and the latter generates plots for visualization.
+which defines a class structure called BuildNMF. Part 5 is handled by BuildNMF.py and [evaluate_nmf.py](src/evaluate_nmf.py), where the former computes values of a metric that rates the coherence of each latent topic and the latter generates plots for visualization.
 
 
 ### Nonnegative Matrix Factorization
