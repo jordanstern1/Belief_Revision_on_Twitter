@@ -158,7 +158,7 @@ In order to judge the quality of the data, I used the script **get_random_tweet_
 to collect a random sample of 200 tweets from my corpus, then I marked each tweet
 as meaningful or not (see **data_quality.md**). A tweet is considered *meaningful*
 if it expresses a genuine change of opinion on a particular topic. In other words,
-a tweet is *not* meaningful if it is sarcastic (e.g., 'ya, i totally changed my mind 🙄😛) or it does not have enough substantive content to infer the relevant topic (e.g.,
+a tweet is *not* meaningful if it is sarcastic (e.g., 'ya, i totally changed my mind 🙄😛') or it does not have enough substantive content to infer the relevant topic (e.g.,
   'changed my mind 😮').
 
 In this analysis, the sample of tweets in data_quality.md can be viewed as a sample
