@@ -41,7 +41,7 @@ Using the [get_tweets.py](src/get_tweets.py) script, I collected a total of 55,5
 Each tweet returned by the API comes in the form of a Tweet Object (dictionary-like object), which contains the actual textual content of the tweet
 along with a host of other field including the date when the tweet was created,
 the Twitter bio of the user who authored the tweet, and any URLs provided in the tweet.
-For more details on Twitter's Python wrapper for their premium API, please see items [2] and [3] in the [References](#references) section.
+For more details on Twitter's Python wrapper for their premium API, please see items [2](#references) and [3](#references).
 
 
 ## Data Analysis
@@ -144,12 +144,15 @@ the words that are most common within each topic (generated using [make_wordclou
 
 ![Alt text](wordclouds_50topics/wordcloud_ranking0_topic5.png)
 
-The bar chart below was generated using [evaluate_nmf.py](src/evaluate_nmf.py), and it shows the number of tweets belonging to that topic (the number of tweets who are more strongly associated with that particular topic than any other).
+The bar chart below was generated using [evaluate_nmf.py](src/evaluate_nmf.py), and it shows the number of tweets belonging to that topic (the number of tweets that are more strongly associated with that particular topic than any other).
 
 ![Alt text](plots/tweet_topic_sizes.png)
 
 We see that the largest topic is Topic \#2. To see the words associated with Topic
 \#2 or with any other topic, see the [wordclouds_50topics](wordclouds_50topics/) folder.
+In that folder, each word cloud is named by its ranking and its topic index \#. Hence,
+the word cloud for Topic \#2 is named [worcloudwordcloud_ranking49_topic2](wordclouds_50topics/worcloudwordcloud_ranking0_topic5.png).
+
 
 ## Time Series
 
