@@ -259,7 +259,7 @@ def umass_box_and_whiskers_for_diff_num_topics(tweet_corpus, num_topics_list,
         plt.savefig(savepath)
 
 
-def get_bar_chart_of_topic_size(nmf_mod, title, ylabel, show=True,
+def get_bar_chart_of_topic_sizes(nmf_mod, title, ylabel, show=True,
                                 savepath=None):
     """ plot bar chart of topic sizes
 
@@ -279,9 +279,12 @@ def get_bar_chart_of_topic_size(nmf_mod, title, ylabel, show=True,
     """
 
     tweets_by_topic = nmf_mod.get_tweets_in_each_topic()
-    topic_sizes = [len(v) for k, v in tweets_by_topic.items()]
+    num_topics = nmf_mod.num_topics
+    topic_sizes = []
+    for i in range(num_topics):
+        topic_sizes.append(len(tweets_by_topic[i]))
     plt.figure(figsize=(10,10))
-    plt.bar(np.arange(1, len(tweets_by_topic)+1), topic_sizes)
+    plt.bar(np.arange(num_topics), topic_sizes)
     plt.xlabel('Topic #', size=14)
     plt.ylabel(ylabel, size=14)
     plt.title(title, size=16)
@@ -305,7 +308,7 @@ if __name__ == '__main__':
     ideal_num_topics = 50 # determined from coherence score boxplots
     nmf_mod = BuildNMF(tc.hashtag_aggregated_corpus, num_topics=ideal_num_topics)
     nmf = nmf_mod.fit()
-    get_bar_chart_of_topic_size(nmf_mod, 'Sizes of Tweet Topics',
+    get_bar_chart_of_topic_sizes(nmf_mod, 'Sizes of Tweet Topics',
                                 'Number of Tweets in Topic',
                                 savepath='../plots/tweet_topic_sizes.png')
 

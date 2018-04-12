@@ -67,13 +67,14 @@ if __name__ == '__main__':
     #                                                show=True, M=5)
 
 
-    # Get wordclouds for all topics for corpus of twitter user bios(50 topics)
+    # Build NMF model
     ideal_num_topics = 10 # determined from coherence score boxplots
     nmf_mod = BuildNMF(corpus, num_topics=ideal_num_topics)
     nmf = nmf_mod.fit(display=True)
+    # Get wordclouds for all topics for corpus of twitter user bios(50 topics)
     # gen_wordclouds_for_all_topics(nmf_mod)
 
     # Plot bar chart of topic sizes
-    get_bar_chart_of_topic_size(nmf_mod, 'Sizes of Twitter Bio Topics',
+    get_bar_chart_of_topic_sizes(nmf_mod, 'Sizes of Twitter Bio Topics',
                                 'Number of Bios in Topic',
                                 savepath='../plots/bio_topic_sizes.png')
