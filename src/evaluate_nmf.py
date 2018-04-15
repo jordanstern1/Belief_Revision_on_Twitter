@@ -246,8 +246,8 @@ def umass_box_and_whiskers_for_diff_num_topics(tweet_corpus, num_topics_list,
     i = 1
     for num_topics, scores in zip(num_topics_list,scores_list):
         plt.subplot(2,5,i)
-        plt.ylabel('UMass Coherence Score', size=8)
-        plt.title('Number of Topics = {}'.format(num_topics), size=8)
+        plt.ylabel('UMass Coherence Score', size=10)
+        plt.title('Number of Topics = {}'.format(num_topics), size=12)
         sns.boxplot(y=scores)
         i+=1
     plt.tight_layout()
@@ -305,19 +305,19 @@ if __name__ == '__main__':
 
 
     # Plot bar chart of topic sizes
-    ideal_num_topics = 50 # determined from coherence score boxplots
-    nmf_mod = BuildNMF(tc.hashtag_aggregated_corpus, num_topics=ideal_num_topics)
-    nmf = nmf_mod.fit()
-    get_bar_chart_of_topic_sizes(nmf_mod, 'Sizes of Tweet Topics',
-                                'Number of Tweets in Topic',
-                                savepath='../plots/tweet_topic_sizes.png')
+    # ideal_num_topics = 50 # determined from coherence score boxplots
+    # nmf_mod = BuildNMF(tc.hashtag_aggregated_corpus, num_topics=ideal_num_topics)
+    # nmf = nmf_mod.fit()
+    # get_bar_chart_of_topic_sizes(nmf_mod, 'Sizes of Tweet Topics',
+    #                             'Number of Tweets in Topic',
+    #                             savepath='../plots/tweet_topic_sizes.png')
 
 
     # Box and whiskers of topic coherences for different numbers of topics
-    # num_topics_list = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
-    # corp = tc.hashtag_aggregated_corpus
-    # score = umass_box_and_whiskers_for_diff_num_topics(corp, num_topics_list,
-    #      savepath='../plots/coherence_score_boxplots_for_diff_num_topics.png')
+    num_topics_list = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+    corp = tc.hashtag_aggregated_corpus
+    score = umass_box_and_whiskers_for_diff_num_topics(corp, num_topics_list,
+         savepath='../plots/coherence_score_boxplots_for_diff_num_topics2.png')
 
 
 
