@@ -148,10 +148,10 @@ The bar chart below was generated using [evaluate_nmf.py](src/evaluate_nmf.py), 
 
 ![Alt text](plots/tweet_topic_sizes.png)
 
-We see that the largest topic is Topic \#2. To see the words associated with Topic
-\#2 or with any other topic, see the [wordclouds_50topics](wordclouds_50topics/) folder.
+We see that the largest topic is Topic 0. To see the words associated with Topic
+0 or with any other topic, see the [wordclouds_50topics](wordclouds_50topics/) folder.
 In that folder, each word cloud is named by its ranking and its topic index \# (e.g., the
-word cloud for Topic \#2 is named [wordcloud_ranking49_topic2](wordclouds_50topics/wordcloud_ranking49_topic2.png)).
+word cloud for Topic \#0 is named [wordcloud_ranking49_topic2](wordclouds_50topics/wordcloud_ranking8_topic0.png)).
 
 
 ## Time Series
